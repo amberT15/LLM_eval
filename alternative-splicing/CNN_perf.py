@@ -8,8 +8,6 @@ from tqdm import tqdm
 import scipy.stats
 import os
 import sys
-sys.path.append('/home/ztang/multitask_RNA/data_generation/mtsplice/')
-import mt_preprocess
 import custom_model
 
 if len(sys.argv) > 1:
@@ -19,7 +17,25 @@ else:
 
 
 rep_list = {}
-rep_list['Tissue'] = mt_preprocess.a_tissues
+rep_list['Tissue'] = ['Retina - Eye', 'RPE/Choroid/Sclera - Eye', 'Adipose - Subcutaneous',
+           'Adipose - Visceral (Omentum)', 'Adrenal Gland', 'Artery - Aorta',
+           'Artery - Coronary', 'Artery - Tibial', 'Bladder', 'Brain - Amygdala',
+           'Brain - Anterior cingulate', 'Brain - Caudate nucleus',
+           'Brain - Cerebellar Hemisphere', 'Brain - Cerebellum', 'Brain - Cortex',
+           'Brain - Frontal Cortex', 'Brain - Hippocampus', 'Brain - Hypothalamus ',
+           'Brain - Nucleus accumbens', 'Brain - Putamen',
+           'Brain - Spinal cord (C1)', 'Substantia nigra - Brain',
+           'Mammary Tissue - Breast', 'Cells - EBV-xform lymphocytes',
+           'Cells - Leukemia (CML)', 'Cells - Xform. fibroblasts',
+           'Cervix - Ectocervix', 'Cervix - Endocervix', 'Colon - Sigmoid',
+           'Colon - Transverse', 'Esophagus - Gastroesoph. Junc.',
+           'Esophagus - Mucosa', 'Esophagus - Muscularis', 'Fallopian Tube',
+           'Heart - Atrial Appendage', 'Heart - Left Ventricle', 'Kidney - Cortex',
+           'Liver', 'Lung', 'Minor Salivary Gland', 'Muscle - Skeletal',
+           'Nerve - Tibial', 'Ovary', 'Pancreas', 'Pituitary', 'Prostate',
+           'Skin - Not Sun Exposed', 'Skin - Sun Exposed (Lower leg)',
+           'Small Intestine - Ileum', 'Spleen', 'Stomach', 'Testis', 'Thyroid',
+           'Uterus', 'Vagina', 'Whole Blood']
 
 #Read dataset
 file = h5py.File('/home/ztang/multitask_RNA/data/mtsplice/delta_logit.h5','r')
@@ -103,7 +119,6 @@ for i in range(5):
     for a in tqdm(range(0,56)):
         corr,_ = scipy.stats.spearmanr(v_y[:,a,0],p_y[:,a],nan_policy='omit')
         corr_list.append(corr)
-        #print(mt_preprocess.a_tissues[i],' PR: ',corr)
 
     rep_list['rep' + str(i)] = corr_list
 
