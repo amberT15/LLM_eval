@@ -225,8 +225,17 @@ def rep_mlp(input_shape,output_shape = 1):
      #initializer
     initializer = keras.initializers.RandomNormal(mean=0.0, stddev=0.005)
     #input layer
+    
+    
     inputs = keras.Input(shape=input_shape, name='sequence')
-    nn = keras.layers.Dense(512,kernel_initializer=initializer)(inputs)
+    if len(input_shape) != 1:
+        # f_input = tf.keras.layers.AveragePooling1D(pool_size=input_shape[0],strides=None,
+        #                                             padding='valid',data_format='channels_last',
+        #                                            )(inputs)
+        f_input = keras.layers.Flatten()(inputs)
+    else:
+        f_input = inputs
+    nn = keras.layers.Dense(512,kernel_initializer=initializer)(f_input)
     nn = keras.layers.BatchNormalization()(nn)
     nn = keras.layers.Activation('relu')(nn)
     nn = keras.layers.Dropout(0.5)(nn)

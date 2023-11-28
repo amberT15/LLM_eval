@@ -10,7 +10,8 @@ from sklearn.metrics import mean_squared_error
 import sys
 
 TASK_N = 1
-dataset = sys.argv[1]
+#dataset = sys.argv[1]
+dataset = 'sei_embed'
 
 def residual_block(input_layer, filter_size, activation='relu', dilated=False):
     if dilated:
@@ -120,8 +121,7 @@ mse_list = []
 dataset_list = []
 for data in [dataset]:
 #for data in ['insert_dataset','gpn_human_embed','2B5_1000G_embed','2B5_1000G_embed_l10','2B5_1000G_embed_l12']:
-
-    dataset = '/home/ztang/multitask_RNA/data/rna_stable/' + data + '.h5'
+    dataset = '../data/RNAenlong/' + data + '.h5'
     f = h5py.File(dataset,'r')
     x_train = f['X_train'][()]
     y_train = f['Y_train'][()]
