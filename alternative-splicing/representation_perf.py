@@ -8,25 +8,25 @@ from tqdm import tqdm
 import scipy.stats
 import sys
 import os
-sys.path.append('/home/ztang/multitask_RNA/data_generation/mtsplice/')
+sys.path.append('../data_generation/')
 import mt_preprocess
 import custom_model
 
-if len(sys.argv) > 1:
-    sub_ratio = float(sys.argv[1])
-else:
-    sub_ratio = 1
+data_file = sys.argv[1]
+model_dir = sys.argv[2]
+output_file = sys.argv[3]
+sub_ratio = float(sys.argv[4])
 
 rep_list = {}
 rep_list['Tissue'] = mt_preprocess.a_tissues
 
 #Read dataset
-data = h5py.File('/home/ztang/multitask_RNA/data/mtsplice/gpn_mt.h5','r')
+data = h5py.File(data_file,'r')
 xl_test = data['xl_test'][()]
 xr_test = data['xr_test'][()]
 y_test = data['y_test'][()]
 
-
+#Sub-select train/valid set
 train_idx = np.random.choice(range(len(data['xl_train'])),
                             size = int(sub_ratio*len(data['xl_train'])),
                             replace = False)
@@ -48,6 +48,7 @@ for i in range(len(y_test)):
     diff = np.abs(mean_psi - target_psi)
     if nan_count >=10 and np.nanmax(np.abs(diff)) >= 0.2:
         filter_list.append(i)
+
 print(len(filter_list))
 v_xl = xl_test[filter_list]
 v_xr = xr_test[filter_list]
@@ -79,19 +80,19 @@ rep_list['Tissue'] = mt_preprocess.a_tissues
 for i in range(5):
     
     #build model
-    model = custom_model.mtsplice_model(56,input_shape = (400,512))
+    model = custom_model.mtsplice_model(56,input_shape =xl_test[0].shape )
     loss = custom_model.diff_KL()
     optimizer = tf.keras.optimizers.Adam(learning_rate=0.001)
     if sub_ratio == 1:
         checkpoint = tf.keras.callbacks.ModelCheckpoint(
-                                            '/home/ztang/multitask_RNA/model/mtsplice_gpn/gpn_model'+str(i)+'.h5',
+                                            model_dir + '/model'+str(i)+'.h5',
                                             monitor='val_loss',
                                             save_best_only=True,
                                             mode = 'min',
                                             save_freq='epoch',)
     else:
         checkpoint = tf.keras.callbacks.ModelCheckpoint(
-                                            '/home/ztang/multitask_RNA/model/mtsplice_gpn/gpn_model'+str(i)+'_'+str(sub_ratio)+'.h5',
+                                            model_dir + '/model'+str(i)+'_'+str(sub_ratio)+'.h5',
                                             monitor='val_loss',
                                             save_best_only=True,
                                             mode = 'min',
@@ -122,12 +123,12 @@ for i in range(5):
     rep_list['rep' + str(i)] = corr_list
 
 if sub_ratio != 1:
-    path = '/home/ztang/multitask_RNA/replications/MTSplice/result/' + str(sub_ratio)+'/'
+    path = './result/' + str(sub_ratio)+'/'
 else:
-    path = '/home/ztang/multitask_RNA/replications/MTSplice/result/'
+    path = './result/'
 
 if os.path.exists(path) == False:
     os.makedirs(path)
 
 perf_df = pd.DataFrame.from_dict(rep_list)
-perf_df.to_csv(path + 'GPN_perf.csv')
+perf_df.to_csv(path + output_file)
