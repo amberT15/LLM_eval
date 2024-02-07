@@ -11,7 +11,7 @@ import sys
 
 TASK_N = 1
 #dataset = sys.argv[1]
-dataset = 'sei_embed'
+dataset = 'dnabert_embed'
 
 def residual_block(input_layer, filter_size, activation='relu', dilated=False):
     if dilated:
@@ -190,5 +190,5 @@ for data in [dataset]:
 df = pd.DataFrame(list(zip(ratio_list, pr_list,mse_list,dataset_list)),
                columns =['Data Ratio','Prediction Pearson R','Prediction MSE','Input Data'])
 
-save_name = './rep_result/rerun_'+data+'.pkl'
+save_name = './result/'+data+'.pkl'
 df.to_pickle(save_name)
