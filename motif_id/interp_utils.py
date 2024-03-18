@@ -23,7 +23,7 @@ def grad_times_input_to_df(x, grad, alphabet='ACGT'):
     saliency_df = logomaker.saliency_to_matrix(seq=seq, values=saliency)
     return saliency_df
 
-def plot_attribution_map(saliency_df, ax=None, figsize=(20,2)):
+def plot_attribution_map(saliency_df, ax=None, figsize=(20,2),fontsize=12):
     """plot an single attribution map using logomaker"""
 
     logomaker.Logo(saliency_df, figsize=figsize, ax=ax)
@@ -33,8 +33,7 @@ def plot_attribution_map(saliency_df, ax=None, figsize=(20,2)):
     ax.spines['top'].set_visible(False)
     ax.yaxis.set_ticks_position('none')
     ax.xaxis.set_ticks_position('none')
-    #plt.xticks([])
-    #plt.yticks([])
+    ax.tick_params(axis='both', which='both', labelsize=12)
 
 ## Function for plot genertaion
 def plot_clean_saliency(X_sample,saliency_scores,window=200,titles=[],filename=None, ax=None):

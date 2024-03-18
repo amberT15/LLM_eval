@@ -83,9 +83,9 @@ for layer_i in range(1,max_layer+1):
     train_index = index[:int(0.9*len(target))]
     test_index = index[int(0.9*len(target)):]
     cls_model = LinearRegression().fit(cls[train_index], target[train_index])
-    cls_test_score.append(cls_model.score(cls[test_index], target[test_index]))
+    cls_test_score.append(scipy.stats.pearsonr(cls_model.predict(cls[test_index]), target[test_index])[0])
     embed_model = LinearRegression().fit(mean_embed[train_index], target[train_index])
-    embed_test_score.append(embed_model.score(mean_embed[test_index], target[test_index]) )
+    embed_test_score.append(scipy.stats.pearsonr(embed_model.predict(mean_embed[test_index]), target[test_index])[0])
 
     print('Performance on layer %d:' % (layer_i))
     print(cls_test_score[-1])

@@ -186,9 +186,9 @@ for layer_i in range(1,max_layer+1):
     for a in alpha:
         print('regression running with alpha = %f' % a)
         cls_model = Ridge(a).fit(cls[train_index], target[train_index])
-        rr_cls[a].append(cls_model.score(cls[test_index], target[test_index]))
+        rr_cls[a].append(scipy.stats.pearsonr(cls_model.predict(cls[test_index]), target[test_index])[0])
         embed_model = Ridge(a).fit(mean_embed[train_index], target[train_index])
-        rr_embed[a].append(embed_model.score(mean_embed[test_index], target[test_index]) )
+        rr_embed[a].append(scipy.stats.pearsonr(embed_model.predict(mean_embed[test_index]), target[test_index])[0])
 
     #MLP for CLS/mean embedding
     ##CLS

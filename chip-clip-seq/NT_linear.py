@@ -33,7 +33,7 @@ if gpus:
 model_name = '2B5_1000G'
 batch_size = 32
 datalen = 200
-file_list = glob.glob('/home/ztang/multitask_RNA/data/eclip/*.h5')
+file_list = glob.glob('/home/ztang/multitask_RNA/data/eclip/*_200.h5')
 
 
 #define model and callbacks

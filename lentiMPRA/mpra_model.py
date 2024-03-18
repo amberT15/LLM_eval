@@ -228,7 +228,7 @@ def rep_mlp(input_shape,output_shape = 1):
     
     
     inputs = keras.Input(shape=input_shape, name='sequence')
-    if len(input_shape) != 1:
+    if isinstance(input_shape,int) == False:
         # f_input = tf.keras.layers.AveragePooling1D(pool_size=input_shape[0],strides=None,
         #                                             padding='valid',data_format='channels_last',
         #                                            )(inputs)
