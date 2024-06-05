@@ -9,7 +9,7 @@ from natsort import natsorted
 import os
 import json
 
-def ResNet(input_shape,output_shape):
+def ResNet(input_shape,output_shape=1,**kwargs):
     initializer = keras.initializers.RandomNormal(mean=0.0, stddev=0.005)
 
     inputs = keras.Input(input_shape)
@@ -78,30 +78,30 @@ def residual_block(input_layer, filter_size, activation='relu', dilated=5, kerne
     nn = keras.layers.add([input_layer, nn])
     return keras.layers.Activation(activation)(nn)
 ##### tensorflow model MPRAnn #####
-def MPRAnn(input_shape, output_shape):
-    inputs = tfkl.Input(shape=(input_shape[1], input_shape[2]), name="input")
-    layer = tfkl.Conv1D(250, kernel_size=7, strides=1, activation='relu', name="conv1")(inputs)  # 250 7 relu
-    layer = tfkl.BatchNormalization()(layer)
-    layer = tfkl.Conv1D(250, 8, strides=1, activation='softmax', name="conv2")(layer)  # 250 8 softmax
-    layer = tfkl.BatchNormalization()(layer)
-    layer = tfkl.MaxPooling1D(pool_size=2, strides=None, name="maxpool1")(layer)
-    layer = tfkl.Dropout(0.1)(layer)
-    layer = tfkl.Conv1D(250, 3, strides=1, activation='softmax', name="conv3")(layer)  # 250 3 softmax
-    layer = tfkl.BatchNormalization()(layer)
-    layer = tfkl.Conv1D(100, 2, strides=1, activation='softmax', name="conv4")(layer)  # 100 3 softmax
-    layer = tfkl.BatchNormalization()(layer)
-    layer = tfkl.MaxPooling1D(pool_size=1, strides=None, name="maxpool2")(layer)
-    layer = tfkl.Dropout(0.1)(layer)
-    layer = tfkl.Flatten()(layer)
-    layer = tfkl.Dense(300, activation='sigmoid')(layer)  # 300
-    layer = tfkl.Dropout(0.3)(layer)
-    layer = tfkl.Dense(200, activation='sigmoid')(layer)  # 300
-    predictions = tfkl.Dense(output_shape[1], activation='linear')(layer)
+def MPRAnn(input_shape,output_shape=1,**kwargs):
+    inputs = keras.Input(shape=(input_shape[0], input_shape[1]), name="input")
+    layer = keras.layers.Conv1D(250, kernel_size=7, strides=1, activation='relu', name="conv1")(inputs)  # 250 7 relu
+    layer = keras.layers.BatchNormalization()(layer)
+    layer = keras.layers.Conv1D(250, 8, strides=1, activation='softmax', name="conv2")(layer)  # 250 8 softmax
+    layer = keras.layers.BatchNormalization()(layer)
+    layer = keras.layers.MaxPooling1D(pool_size=2, strides=None, name="maxpool1")(layer)
+    layer = keras.layers.Dropout(0.1)(layer)
+    layer = keras.layers.Conv1D(250, 3, strides=1, activation='softmax', name="conv3")(layer)  # 250 3 softmax
+    layer = keras.layers.BatchNormalization()(layer)
+    layer = keras.layers.Conv1D(100, 2, strides=1, activation='softmax', name="conv4")(layer)  # 100 3 softmax
+    layer = keras.layers.BatchNormalization()(layer)
+    layer = keras.layers.MaxPooling1D(pool_size=1, strides=None, name="maxpool2")(layer)
+    layer = keras.layers.Dropout(0.1)(layer)
+    layer = keras.layers.Flatten()(layer)
+    layer = keras.layers.Dense(300, activation='sigmoid')(layer)  # 300
+    layer = keras.layers.Dropout(0.3)(layer)
+    layer = keras.layers.Dense(200, activation='sigmoid')(layer)  # 300
+    predictions = keras.layers.Dense(output_shape, activation='linear')(layer)
     model = keras.Model(inputs=inputs, outputs=predictions)
-    return (model)
+    return model
 
 ##### tensorflow model representation learning #####
-def rep_cnn(input_shape,config={}):
+def rep_cnn(input_shape,config={},factor=1):
     #initializer
     initializer = keras.initializers.RandomNormal(mean=0.0, stddev=0.005)
     #input layer
@@ -113,7 +113,7 @@ def rep_cnn(input_shape,config={}):
                              kernel_initializer = initializer)(nn)
 
     #first conv block
-    nn = keras.layers.Conv1D(filters=config['conv1_filter'],
+    nn = keras.layers.Conv1D(filters=config['conv1_filter']*factor,
                              kernel_size=config['conv1_kernel'],
                              padding='same',
                              kernel_initializer = initializer)(nn)
@@ -130,7 +130,7 @@ def rep_cnn(input_shape,config={}):
     # nn = keras.layers.Dropout(config['res_dropout'])(nn)
 
 
-    nn = keras.layers.Conv1D(filters=config['conv2_filter'],
+    nn = keras.layers.Conv1D(filters=config['conv2_filter']*factor,
                              kernel_size=config['conv2_kernel'],
                              padding='same',
                              kernel_initializer = initializer)(nn)
@@ -141,12 +141,12 @@ def rep_cnn(input_shape,config={}):
 
     #output block
     nn = keras.layers.Flatten()(nn)
-    nn = keras.layers.Dense(config['dense'],kernel_initializer=initializer)(nn)
+    nn = keras.layers.Dense(config['dense']*factor,kernel_initializer=initializer)(nn)
     nn = keras.layers.BatchNormalization()(nn)
     nn = keras.layers.Activation('relu')(nn)
     nn = keras.layers.Dropout(0.5)(nn)
 
-    nn = keras.layers.Dense(config['dense2'],kernel_initializer=initializer)(nn)
+    nn = keras.layers.Dense(config['dense2']*factor,kernel_initializer=initializer)(nn)
     nn = keras.layers.BatchNormalization()(nn)
     nn = keras.layers.Activation('relu')(nn)
     nn = keras.layers.Dropout(0.5)(nn)
@@ -221,7 +221,7 @@ def rep_onehot(input_shape,config={}):
     model =  keras.Model(inputs=[seq_inputs,embed_inputs], outputs=outputs)
     return model
 
-def rep_mlp(input_shape,output_shape = 1):
+def rep_mlp(input_shape,output_shape = 1,factor = 1):
      #initializer
     initializer = keras.initializers.RandomNormal(mean=0.0, stddev=0.005)
     #input layer
@@ -235,12 +235,12 @@ def rep_mlp(input_shape,output_shape = 1):
         f_input = keras.layers.Flatten()(inputs)
     else:
         f_input = inputs
-    nn = keras.layers.Dense(512,kernel_initializer=initializer)(f_input)
+    nn = keras.layers.Dense(512*factor,kernel_initializer=initializer)(f_input)
     nn = keras.layers.BatchNormalization()(nn)
     nn = keras.layers.Activation('relu')(nn)
     nn = keras.layers.Dropout(0.5)(nn)
 
-    nn = keras.layers.Dense(256,kernel_initializer=initializer)(nn)
+    nn = keras.layers.Dense(256*factor,kernel_initializer=initializer)(nn)
     nn = keras.layers.BatchNormalization()(nn)
     nn = keras.layers.Activation('relu')(nn)
     nn = keras.layers.Dropout(0.5)(nn)
