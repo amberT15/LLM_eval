@@ -120,7 +120,7 @@ pr_list = []
 mse_list = []
 dataset_list = []
 for data in [dataset]:
-#for data in ['insert_dataset','gpn_human_embed','2B5_1000G_embed','2B5_1000G_embed_l10','2B5_1000G_embed_l12']:
+#for data in ['insert_dataset','gpn_human_embed','2B5_1000G_embed','dnabert_embed','hyena_embed','rbp_embed','sei_embed']:
     dataset = '../data/RNAenlong/' + data + '.h5'
     f = h5py.File(dataset,'r')
     x_train = f['X_train'][()]
