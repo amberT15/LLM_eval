@@ -48,44 +48,6 @@ def ResNet(input_shape,output_shape=1,**kwargs):
 
     return model
 
-# def ResNet(input_shape,output_shape=1,**kwargs):
-#     initializer = keras.initializers.RandomNormal(mean=0.0, stddev=0.005)
-
-#     inputs = keras.Input(input_shape)
-
-#     nn = keras.layers.Conv1D(filters=196, kernel_size=15, padding='same', use_bias=True, kernel_initializer=initializer)(inputs)
-#     nn = keras.layers.BatchNormalization()(nn)
-#     nn = keras.layers.Activation('exponential', name='conv_activation')(nn)
-#     nn = keras.layers.Dropout(0.2)(nn)
-
-
-#     # residual block
-#     nn = residual_block(nn, filter_size=3, dilated=5,kernel_initializer = initializer)
-#     nn = keras.layers.MaxPooling1D(10, padding='same')(nn)
-#     nn = keras.layers.Dropout(0.2)(nn)
-
-#     nn = keras.layers.Conv1D(filters=256, kernel_size=7, padding='same', use_bias=True, kernel_initializer=initializer)(nn)
-#     nn = keras.layers.BatchNormalization()(nn)
-#     nn = keras.layers.Activation('relu')(nn)
-#     nn = keras.layers.MaxPooling1D(5, padding='same')(nn)
-#     nn = keras.layers.Dropout(0.2)(nn)
-
-#     nn = keras.layers.Flatten()(nn)
-#     nn = keras.layers.Dense(512, use_bias=True, kernel_initializer=initializer)(nn)
-#     nn = keras.layers.BatchNormalization()(nn)
-#     nn = keras.layers.Activation('relu')(nn)
-#     nn = keras.layers.Dropout(0.5)(nn)
-
-#     nn = keras.layers.Dense(256, use_bias=True, kernel_initializer=initializer)(nn)
-#     nn = keras.layers.BatchNormalization()(nn)
-#     nn = keras.layers.Activation('relu')(nn)
-#     nn = keras.layers.Dropout(0.5)(nn)
-
-#     outputs = keras.layers.Dense(output_shape, activation='linear', kernel_initializer=initializer)(nn)
-#     model = keras.Model(inputs=inputs, outputs=outputs)
-
-#     return model
-
 def residual_block(input_layer, filter_size, activation='relu', dilated=5, kernel_initializer=None):
     factor = []
     base = 2
