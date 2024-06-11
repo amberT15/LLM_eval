@@ -1,7 +1,3 @@
-# %% [markdown]
-# ## Train Model
-
-# %%
 import h5py
 import sys
 import csv
@@ -10,16 +6,6 @@ import tensorflow as tf
 import mpra_model
 from sklearn import model_selection
 import scipy.stats
-#celltype = sys.argv[1]
-# file = '../data/lenti_MPRA/'+celltype+'_data.h5'
-
-# f = h5py.File(file, 'r')
-# x_train = f['onehot_train'][:]
-# x_valid = f['onehot_valid'][:]
-# x_test = f['onehot_test'][:]
-# y_train = f['y_train'][:]
-# y_valid = f['y_valid'][:]
-# y_test = f['y_test'][:]
 
 cnn_config = {
     'activation':'exponential',
