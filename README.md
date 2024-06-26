@@ -23,5 +23,5 @@ Since not all gLMs can be installed in the same environment, three different env
 * and `gpn_requirments` are for all GPN related inference, such as `data_generation/embedding_generation/GPN_embed.ipynb` and `CAGI/cagi_gpn.ipynb`
 
 
-Original dataset and models trained for this study can be accessed from [zenodo](https://doi.org/10.5281/zenodo.8279716), they should be decompressed into the base folder for this repo. No installation is required to run analysis in this repository
+Original dataset and models trained for this study can be accessed from [zenodo](https://doi.org/10.5281/zenodo.11583224), they should be decompressed into the base folder for this repo. No installation is required to run analysis in this repository
 
